@@ -29,8 +29,8 @@ class AppHeader extends StatelessWidget {
         child: Row(
           children: [
             Container(
-              width: 58,
-              height: 58,
+              width: 56,
+              height: 56,
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -52,7 +52,7 @@ class AppHeader extends StatelessWidget {
                   ),
                   const SizedBox(height: 4),
                   Text(
-                    'Kelola tugas lokal dan API dengan rapi.',
+                    'Kelola tugas lokal dan API dengan nyaman.',
                     style: theme.textTheme.bodyMedium?.copyWith(
                       color: Colors.white.withValues(alpha: 0.86),
                     ),

@@ -77,7 +77,7 @@ class _TodoFormState extends State<TodoForm> {
                     child: CircularProgressIndicator(strokeWidth: 2),
                   )
                 : const Icon(Icons.save_rounded),
-            label: Text(widget.submitLabel),
+            label: Text(widget.submitLabel, overflow: TextOverflow.ellipsis),
           ),
         ],
       ),
