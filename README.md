@@ -89,8 +89,7 @@ DummyJSON tidak menyimpan perubahan secara permanen. Karena itu, setelah create,
 
 | Todo Lokal | Todo API |
 | --- | --- |
-| ![Todo Lokal](screenshots/todo-alvin-01.png) | ![Todo API](screenshots/todo-alvin-02.png) |
-| ![Tambah Todo Lokal](screenshots/todo-alvin-03.png) | ![Form Todo API](screenshots/todo-alvin-04.png) |
-| ![Daftar Todo Lokal](screenshots/todo-alvin-05.png) | ![Daftar Todo API](screenshots/todo-alvin-06.png) |
-| ![Filter Todo Lokal](screenshots/todo-alvin-07.png) | ![Pagination Todo API](screenshots/todo-alvin-08.png) |
-| ![Edit Todo](screenshots/todo-alvin-09.png) | ![Dark Mode](screenshots/todo-alvin-10.png) |
+| ![Todo Lokal](screenshots/todo-alvin-01.jpeg) | ![Todo API](screenshots/todo-alvin-02.jpeg) |
+| ![Tambah Todo Lokal](screenshots/todo-alvin-03.jpeg) | ![Form Todo API](screenshots/todo-alvin-04.jpeg) |
+| ![Daftar Todo Lokal](screenshots/todo-alvin-05.jpeg) | ![Daftar Todo API](screenshots/todo-alvin-06.jpeg) |
+| ![Filter Todo Lokal](screenshots/todo-alvin-07.jpeg) | ![Pagination Todo API](screenshots/todo-alvin-08.jpeg) |
