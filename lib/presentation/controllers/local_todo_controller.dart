@@ -11,10 +11,29 @@ class LocalTodoController extends ChangeNotifier {
 
   bool _isLoading = false;
   String? _errorMessage;
+  String _searchQuery = '';
+  TodoFilter _filter = TodoFilter.all;
 
   List<Todo> get todos => List.unmodifiable(_todos);
+  List<Todo> get visibleTodos {
+    return _todos.where((todo) {
+      final matchesSearch = todo.title.toLowerCase().contains(
+        _searchQuery.toLowerCase(),
+      );
+      final matchesFilter = switch (_filter) {
+        TodoFilter.all => true,
+        TodoFilter.completed => todo.isCompleted,
+        TodoFilter.pending => !todo.isCompleted,
+      };
+
+      return matchesSearch && matchesFilter;
+    }).toList();
+  }
+
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
+  String get searchQuery => _searchQuery;
+  TodoFilter get filter => _filter;
 
   Future<void> loadTodos() async {
     _setLoading(true);
@@ -92,6 +111,16 @@ class LocalTodoController extends ChangeNotifier {
     }
   }
 
+  void setSearchQuery(String value) {
+    _searchQuery = value.trim();
+    notifyListeners();
+  }
+
+  void setFilter(TodoFilter value) {
+    _filter = value;
+    notifyListeners();
+  }
+
   Future<bool> _replaceTodo(Todo updatedTodo) async {
     final index = _todos.indexWhere((todo) => todo.id == updatedTodo.id);
     if (index == -1) return false;
@@ -115,4 +144,14 @@ class LocalTodoController extends ChangeNotifier {
     _isLoading = value;
     notifyListeners();
   }
+}
+
+enum TodoFilter {
+  all('Semua'),
+  completed('Selesai'),
+  pending('Pending');
+
+  const TodoFilter(this.label);
+
+  final String label;
 }

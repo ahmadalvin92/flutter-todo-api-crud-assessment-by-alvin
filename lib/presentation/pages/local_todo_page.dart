@@ -80,6 +80,27 @@ class _LocalTodoPageState extends State<LocalTodoPage> {
               ),
             ),
             const SizedBox(height: 20),
+            TextField(
+              onChanged: _controller.setSearchQuery,
+              decoration: const InputDecoration(
+                hintText: 'Cari berdasarkan judul',
+                prefixIcon: Icon(Icons.search_rounded),
+              ),
+            ),
+            const SizedBox(height: 12),
+            SegmentedButton<TodoFilter>(
+              segments: TodoFilter.values
+                  .map(
+                    (filter) =>
+                        ButtonSegment(value: filter, label: Text(filter.label)),
+                  )
+                  .toList(),
+              selected: {_controller.filter},
+              onSelectionChanged: (selected) {
+                _controller.setFilter(selected.first);
+              },
+            ),
+            const SizedBox(height: 20),
             if (_controller.isLoading)
               const Center(
                 child: Padding(
@@ -93,18 +114,40 @@ class _LocalTodoPageState extends State<LocalTodoPage> {
                 title: 'Belum ada todo',
                 message: 'Tambahkan todo pertama untuk mulai mengatur tugas.',
               )
+            else if (_controller.visibleTodos.isEmpty)
+              const EmptyState(
+                icon: Icons.search_off_rounded,
+                title: 'Todo tidak ditemukan',
+                message: 'Coba kata kunci atau filter yang berbeda.',
+              )
             else
-              ..._controller.todos.map(
-                (todo) => Padding(
-                  padding: const EdgeInsets.only(bottom: 12),
-                  child: TodoCard(
-                    todo: todo,
-                    onToggleStatus: () => _toggleStatus(todo),
-                    onEdit: () => _showEditSheet(todo),
-                    onDelete: () => _confirmDelete(todo),
+              ..._controller.visibleTodos.indexed.map((entry) {
+                final (index, todo) = entry;
+                return TweenAnimationBuilder<double>(
+                  key: ValueKey(todo.id),
+                  tween: Tween(begin: 0, end: 1),
+                  duration: Duration(milliseconds: 220 + (index * 40)),
+                  curve: Curves.easeOutCubic,
+                  builder: (context, value, child) {
+                    return Opacity(
+                      opacity: value,
+                      child: Transform.translate(
+                        offset: Offset(0, 12 * (1 - value)),
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: TodoCard(
+                      todo: todo,
+                      onToggleStatus: () => _toggleStatus(todo),
+                      onEdit: () => _showEditSheet(todo),
+                      onDelete: () => _confirmDelete(todo),
+                    ),
                   ),
-                ),
-              ),
+                );
+              }),
           ],
         );
       },
