@@ -131,6 +131,36 @@ class _ApiTodoPageState extends State<ApiTodoPage> {
                     ),
                   ),
                 ),
+              if (!_controller.isLoading && _controller.errorMessage == null)
+                Padding(
+                  padding: const EdgeInsets.only(top: 4),
+                  child: _controller.hasMore
+                      ? OutlinedButton.icon(
+                          onPressed: _controller.isLoadingMore
+                              ? null
+                              : _controller.loadNextPage,
+                          icon: _controller.isLoadingMore
+                              ? const SizedBox.square(
+                                  dimension: 18,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                )
+                              : const Icon(Icons.expand_more_rounded),
+                          label: Text(
+                            _controller.isLoadingMore
+                                ? 'Memuat data...'
+                                : 'Muat berikutnya',
+                          ),
+                        )
+                      : Text(
+                          'Semua data sudah dimuat.',
+                          textAlign: TextAlign.center,
+                          style: theme.textTheme.bodyMedium?.copyWith(
+                            color: theme.colorScheme.onSurfaceVariant,
+                          ),
+                        ),
+                ),
             ],
           ),
         );

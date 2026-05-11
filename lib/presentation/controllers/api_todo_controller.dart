@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 
+import '../../core/constants/api_config.dart';
 import '../../data/models/todo.dart';
 import '../../data/repositories/todo_api_repository.dart';
 
@@ -10,24 +11,53 @@ class ApiTodoController extends ChangeNotifier {
   final List<Todo> _todos = [];
 
   bool _isLoading = false;
+  bool _isLoadingMore = false;
+  bool _hasMore = true;
   String? _errorMessage;
 
   List<Todo> get todos => List.unmodifiable(_todos);
   bool get isLoading => _isLoading;
+  bool get isLoadingMore => _isLoadingMore;
+  bool get hasMore => _hasMore;
   String? get errorMessage => _errorMessage;
 
   Future<void> fetchTodos() async {
     _setLoading(true);
     try {
-      final todos = await _repository.fetchTodos();
+      final todos = await _repository.fetchTodos(
+        limit: ApiConfig.defaultLimit,
+        skip: 0,
+      );
       _todos
         ..clear()
         ..addAll(todos);
+      _hasMore = todos.length == ApiConfig.defaultLimit;
       _errorMessage = null;
     } catch (_) {
       _errorMessage = 'Data todo API belum bisa dimuat.';
     } finally {
       _setLoading(false);
+    }
+  }
+
+  Future<void> loadNextPage() async {
+    if (_isLoadingMore || !_hasMore) return;
+
+    _isLoadingMore = true;
+    notifyListeners();
+    try {
+      final todos = await _repository.fetchTodos(
+        limit: ApiConfig.defaultLimit,
+        skip: _todos.length,
+      );
+      _todos.addAll(todos);
+      _hasMore = todos.length == ApiConfig.defaultLimit;
+      _errorMessage = null;
+    } catch (_) {
+      _errorMessage = 'Halaman berikutnya belum bisa dimuat.';
+    } finally {
+      _isLoadingMore = false;
+      notifyListeners();
     }
   }
 
