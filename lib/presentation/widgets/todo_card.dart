@@ -1,0 +1,55 @@
+import 'package:flutter/material.dart';
+
+import '../../data/models/todo.dart';
+
+class TodoCard extends StatelessWidget {
+  const TodoCard({super.key, required this.todo});
+
+  final Todo todo;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final isCompleted = todo.isCompleted;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(
+              isCompleted
+                  ? Icons.check_circle_rounded
+                  : Icons.radio_button_unchecked_rounded,
+              color: isCompleted
+                  ? theme.colorScheme.secondary
+                  : theme.colorScheme.outline,
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    todo.title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    todo.description,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
