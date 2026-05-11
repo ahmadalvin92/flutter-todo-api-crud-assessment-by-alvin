@@ -87,5 +87,10 @@ DummyJSON tidak menyimpan perubahan secara permanen. Karena itu, setelah create,
 
 ## Screenshot
 
-Tambahkan screenshot aplikasi pada bagian ini setelah menjalankan aplikasi di emulator atau perangkat Android.
-
+| Todo Lokal | Todo API |
+| --- | --- |
+| ![Todo Lokal](screenshots/todo-alvin-01.png) | ![Todo API](screenshots/todo-alvin-02.png) |
+| ![Tambah Todo Lokal](screenshots/todo-alvin-03.png) | ![Form Todo API](screenshots/todo-alvin-04.png) |
+| ![Daftar Todo Lokal](screenshots/todo-alvin-05.png) | ![Daftar Todo API](screenshots/todo-alvin-06.png) |
+| ![Filter Todo Lokal](screenshots/todo-alvin-07.png) | ![Pagination Todo API](screenshots/todo-alvin-08.png) |
+| ![Edit Todo](screenshots/todo-alvin-09.png) | ![Dark Mode](screenshots/todo-alvin-10.png) |
