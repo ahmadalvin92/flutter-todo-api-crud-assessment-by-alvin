@@ -56,6 +56,61 @@ class LocalTodoController extends ChangeNotifier {
     }
   }
 
+  Future<bool> updateTodo({
+    required Todo todo,
+    required String title,
+    required String description,
+  }) {
+    return _replaceTodo(
+      todo.copyWith(title: title.trim(), description: description.trim()),
+    );
+  }
+
+  Future<bool> toggleStatus(Todo todo) {
+    return _replaceTodo(
+      todo.copyWith(
+        status: todo.isCompleted ? TodoStatus.pending : TodoStatus.completed,
+      ),
+    );
+  }
+
+  Future<bool> deleteTodo(Todo todo) async {
+    final index = _todos.indexWhere((item) => item.id == todo.id);
+    if (index == -1) return false;
+
+    final removedTodo = _todos.removeAt(index);
+    try {
+      await _repository.saveTodos(_todos);
+      _errorMessage = null;
+      notifyListeners();
+      return true;
+    } catch (_) {
+      _todos.insert(index, removedTodo);
+      _errorMessage = 'Todo belum bisa dihapus.';
+      notifyListeners();
+      return false;
+    }
+  }
+
+  Future<bool> _replaceTodo(Todo updatedTodo) async {
+    final index = _todos.indexWhere((todo) => todo.id == updatedTodo.id);
+    if (index == -1) return false;
+
+    final oldTodo = _todos[index];
+    _todos[index] = updatedTodo;
+    try {
+      await _repository.saveTodos(_todos);
+      _errorMessage = null;
+      notifyListeners();
+      return true;
+    } catch (_) {
+      _todos[index] = oldTodo;
+      _errorMessage = 'Todo belum bisa diperbarui.';
+      notifyListeners();
+      return false;
+    }
+  }
+
   void _setLoading(bool value) {
     _isLoading = value;
     notifyListeners();

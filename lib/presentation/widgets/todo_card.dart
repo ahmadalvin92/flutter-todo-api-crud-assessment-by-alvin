@@ -3,9 +3,18 @@ import 'package:flutter/material.dart';
 import '../../data/models/todo.dart';
 
 class TodoCard extends StatelessWidget {
-  const TodoCard({super.key, required this.todo});
+  const TodoCard({
+    super.key,
+    required this.todo,
+    this.onToggleStatus,
+    this.onEdit,
+    this.onDelete,
+  });
 
   final Todo todo;
+  final VoidCallback? onToggleStatus;
+  final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +27,19 @@ class TodoCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Icon(
-              isCompleted
-                  ? Icons.check_circle_rounded
-                  : Icons.radio_button_unchecked_rounded,
-              color: isCompleted
-                  ? theme.colorScheme.secondary
-                  : theme.colorScheme.outline,
+            IconButton(
+              onPressed: onToggleStatus,
+              tooltip: isCompleted ? 'Tandai pending' : 'Tandai selesai',
+              icon: Icon(
+                isCompleted
+                    ? Icons.check_circle_rounded
+                    : Icons.radio_button_unchecked_rounded,
+                color: isCompleted
+                    ? theme.colorScheme.secondary
+                    : theme.colorScheme.outline,
+              ),
             ),
-            const SizedBox(width: 12),
+            const SizedBox(width: 4),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -47,9 +60,40 @@ class TodoCard extends StatelessWidget {
                 ],
               ),
             ),
+            PopupMenuButton<_TodoAction>(
+              tooltip: 'Aksi todo',
+              onSelected: (action) {
+                switch (action) {
+                  case _TodoAction.edit:
+                    onEdit?.call();
+                  case _TodoAction.delete:
+                    onDelete?.call();
+                }
+              },
+              itemBuilder: (context) => const [
+                PopupMenuItem(
+                  value: _TodoAction.edit,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(Icons.edit_rounded),
+                    title: Text('Edit'),
+                  ),
+                ),
+                PopupMenuItem(
+                  value: _TodoAction.delete,
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    leading: Icon(Icons.delete_outline_rounded),
+                    title: Text('Hapus'),
+                  ),
+                ),
+              ],
+            ),
           ],
         ),
       ),
     );
   }
 }
+
+enum _TodoAction { edit, delete }

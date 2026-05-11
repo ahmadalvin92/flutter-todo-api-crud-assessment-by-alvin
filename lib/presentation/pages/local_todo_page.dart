@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../data/models/todo.dart';
 import '../../data/repositories/local_todo_repository.dart';
 import '../../data/services/local_todo_storage_service.dart';
 import '../controllers/local_todo_controller.dart';
@@ -96,7 +97,12 @@ class _LocalTodoPageState extends State<LocalTodoPage> {
               ..._controller.todos.map(
                 (todo) => Padding(
                   padding: const EdgeInsets.only(bottom: 12),
-                  child: TodoCard(todo: todo),
+                  child: TodoCard(
+                    todo: todo,
+                    onToggleStatus: () => _toggleStatus(todo),
+                    onEdit: () => _showEditSheet(todo),
+                    onDelete: () => _confirmDelete(todo),
+                  ),
                 ),
               ),
           ],
@@ -109,5 +115,87 @@ class _LocalTodoPageState extends State<LocalTodoPage> {
     ScaffoldMessenger.of(context)
       ..hideCurrentSnackBar()
       ..showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Future<void> _toggleStatus(Todo todo) async {
+    final success = await _controller.toggleStatus(todo);
+    if (!mounted) return;
+    _showSnackBar(
+      context,
+      success
+          ? 'Status todo diperbarui.'
+          : _controller.errorMessage ?? 'Status gagal diperbarui.',
+    );
+  }
+
+  Future<void> _showEditSheet(Todo todo) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (sheetContext) {
+        return Padding(
+          padding: EdgeInsets.fromLTRB(
+            20,
+            20,
+            20,
+            MediaQuery.viewInsetsOf(sheetContext).bottom + 20,
+          ),
+          child: TodoForm(
+            initialTitle: todo.title,
+            initialDescription: todo.description,
+            submitLabel: 'Simpan perubahan',
+            onSubmit: (title, description) async {
+              final success = await _controller.updateTodo(
+                todo: todo,
+                title: title,
+                description: description,
+              );
+              if (!mounted || !sheetContext.mounted) return success;
+              if (success) Navigator.of(sheetContext).pop();
+              _showSnackBar(
+                context,
+                success
+                    ? 'Todo berhasil diperbarui.'
+                    : _controller.errorMessage ?? 'Todo gagal diperbarui.',
+              );
+              return success;
+            },
+          ),
+        );
+      },
+    );
+  }
+
+  Future<void> _confirmDelete(Todo todo) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Hapus todo?'),
+          content: Text('Todo "${todo.title}" akan dihapus dari perangkat.'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(dialogContext).pop(false),
+              child: const Text('Batal'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.of(dialogContext).pop(true),
+              child: const Text('Hapus'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmed != true) return;
+    final success = await _controller.deleteTodo(todo);
+    if (!mounted) return;
+    _showSnackBar(
+      context,
+      success
+          ? 'Todo berhasil dihapus.'
+          : _controller.errorMessage ?? 'Todo gagal dihapus.',
+    );
   }
 }
